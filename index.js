@@ -1,7 +1,6 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
-// Joi is for validations
 const Joi = require('joi');
 
 const init = async () => {
@@ -22,7 +21,7 @@ const init = async () => {
 
     // Dynamic Routes
 
-    // Route to create TODO
+    // Route to CREATE TODO
     server.route({
         method: 'PUT',
         path: '/todos',
@@ -34,7 +33,7 @@ const init = async () => {
         }
     });
 
-    // Route to get 
+    // Route to GET 
     server.route({
         method: 'GET',
         path: '/todos',
@@ -52,6 +51,18 @@ const init = async () => {
             }
         }
     })
+
+
+    // Route to DELETE 
+    server.route({
+        method: 'DELETE',
+        path: '/todo/{id}',
+        handler: (request, h) => { 
+            
+            
+            return '';
+        }
+    });
 
     await server.start();
     console.log('Server running on %s', server.info.uri);

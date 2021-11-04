@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../TO-DO-LIST-DB.db"
+}
+
+model task {
+  task_id     Int       @id @default(autoincrement())
+  state       String?
+  description String?
+  dateAdded   DateTime? @default(now())
+}
