@@ -5,8 +5,8 @@ async function main() {
     // ... you will write your Prisma Client queries here
 
     const tasks = [
-        { state: 'INCOMPLETE', description: 'Buy milk at the store.' },
-        { state: 'INCOMPLETE', description: 'Buy bread at the store.' },
+        { description: 'Buy milk at the store.' },
+        { description: 'Buy bread at the store.' },
     ]
 
     for (const task in tasks) {

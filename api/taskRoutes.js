@@ -11,27 +11,21 @@ const apiTasks = [
             return 'Hello World!';
         }
     },
-    // Dynamic Routes
 
-    // Route to CREATE TODO
+    // Dynamic Routes
+    // Route to CREATE
     {
         method: 'PUT',
         path: '/todos',
-        handler: function (request, h) {
-
-            /*const state = request.params.state ? request.params.state : 'All';
-            
-            return '${state}';*/
-        }
+        handler: createTaskHandler
     },
     // Route to GET 
     {
         method: 'GET',
         path: '/todos',
         handler: function (request, h) {
-            const query = request.query;
 
-            return query;
+            return request.query;
         },
         options: {
             validate: {
@@ -46,21 +40,33 @@ const apiTasks = [
     {
         method: 'DELETE',
         path: '/todo/{id}',
-        handler: deletePostHandler
+        handler: deleteTaskHandler
     },
 ]
 
-async function deletePostHandler(request, h) {
+async function createTaskHandler(request, h) {
+    const payload = request.payload;
+
+    const createTask = await prisma.task.create({
+        data: {
+            description: payload.description,
+        },
+    })
+
+    return h.response(createTask);
+}
+
+async function deleteTaskHandler(request, h) {
     const id = Number(request.params.id);
 
     try {
-        const post = await prisma.task.delete({
+        const task = await prisma.task.delete({
             where: { task_id: id },
         })
         return h.response();
     } catch (err) {
-        console.log("", err)
-        return h.response(err).code(404)
+        console.log("", err);
+        return h.response(err).code(404);
     }
 }
 

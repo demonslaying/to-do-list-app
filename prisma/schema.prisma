@@ -9,7 +9,7 @@ datasource db {
 
 model task {
   task_id     Int       @id @default(autoincrement())
-  state       String?
+  state       String?   @default("INCOMPLETE")
   description String?
-  dateAdded   DateTime? @default(now())
+  dateAdded   DateTime? @default(dbgenerated("CURRENT_DATE"))
 }
