@@ -7,6 +7,14 @@ async function main() {
     const tasks = [
         { description: 'Buy milk at the store.' },
         { description: 'Buy bread at the store.' },
+        {
+            state: 'COMPLETE',
+            description: 'Wash the car.'
+        },
+        {
+            state: 'COMPLETE',
+            description: 'Clean the bedroom.'
+        }
     ]
 
     for (const task in tasks) {

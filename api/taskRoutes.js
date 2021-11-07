@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient()
 
 const apiTasks = [
@@ -23,15 +23,25 @@ const apiTasks = [
     {
         method: 'GET',
         path: '/todos',
-        handler: function (request, h) {
-
-            return request.query;
-        },
+        handler: getTasksHandler,
         options: {
             validate: {
                 query: Joi.object({
                     filter: Joi.string().valid('ALL', 'COMPLETE', 'INCOMPLETE').default('ALL').insensitive(),
                     orderBy: Joi.string().valid('DESCRIPTION', 'DATE_ADDED').default('DATE_ADDED').insensitive(),
+                })
+            }
+        }
+    },
+    // Route to PATCH
+    {
+        method: 'PATCH',
+        path: '/todo/{id}',
+        handler: editTaskHandler,
+        options: {
+            validate: {
+                payload: Joi.object({
+                    description: Joi.string().required()
                 })
             }
         }
@@ -54,6 +64,87 @@ async function createTaskHandler(request, h) {
     })
 
     return h.response(createTask);
+}
+
+async function getTasksHandler(request, h) {
+    // TODO GET TASKS FROM DB WITH PRISMA BASED ON FILTERS
+    console.log("query", request.query);
+
+    if (request.query.filter == 'ALL') {
+        try {
+            if (request.query.orderBy == 'DESCRIPTION') {
+                const tasks = await prisma.task.findMany({
+                    orderBy: {
+                        description: 'asc'
+                    }
+                })
+                return h.response(tasks);
+            }
+            else {
+                const tasks = await prisma.task.findMany({
+                    orderBy: {
+                        dateAdded: 'asc'
+                    }
+                })
+                return h.response(tasks);
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    else {
+        try {
+            if (request.query.orderBy == 'DESCRIPTION') {
+                const tasks = await prisma.task.findMany({
+                    where: {
+                        state: request.query.filter
+                    },
+                    orderBy: {
+                        description: 'asc'
+                    }
+                })
+                return h.response(tasks);
+            }
+            else {
+                const tasks = await prisma.task.findMany({
+                    where: {
+                        state: request.query.filter
+                    },
+                })
+                return h.response(tasks);
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+}
+
+async function editTaskHandler(request, h) {
+    const id = Number(request.params.id);
+    if (id == null) {
+        return h.response("Invalid task").code(404);
+    }
+    const payload = request.payload;
+
+    try {
+        // TODO GET A TASK FROM DB para meter no if
+        if (prisma.state == 'COMPLETE') {
+            return h.response(err).code(400);
+        }
+
+        const editTask = await prisma.task.update({
+            where: {
+                task_id: id
+            },
+            data: {
+                state: 'COMPLETE',
+                description: payload.description,
+            },
+        })
+        return h.response(editTask);
+    } catch (err) {
+        return h.response(err).code(400);
+    }
 }
 
 async function deleteTaskHandler(request, h) {
