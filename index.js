@@ -1,7 +1,6 @@
 'use strict';
 
 const { routes } = require('./api/taskRoutes.js')
-
 const Hapi = require('@hapi/hapi');
 
 const init = async () => {

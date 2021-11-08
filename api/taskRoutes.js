@@ -67,8 +67,6 @@ async function createTaskHandler(request, h) {
 }
 
 async function getTasksHandler(request, h) {
-    // TODO GET TASKS FROM DB WITH PRISMA BASED ON FILTERS
-    console.log("query", request.query);
 
     if (request.query.filter == 'ALL') {
         try {
@@ -109,7 +107,7 @@ async function getTasksHandler(request, h) {
                 const tasks = await prisma.task.findMany({
                     where: {
                         state: request.query.filter
-                    },
+                    }
                 })
                 return h.response(tasks);
             }
@@ -121,15 +119,29 @@ async function getTasksHandler(request, h) {
 
 async function editTaskHandler(request, h) {
     const id = Number(request.params.id);
-    if (id == null) {
+    const findUnique = await prisma.task.findUnique({
+        where: {
+            task_id: id
+        }
+    })
+
+    if (!findUnique) {
         return h.response("Invalid task").code(404);
     }
+
     const payload = request.payload;
 
     try {
-        // TODO GET A TASK FROM DB para meter no if
-        if (prisma.state == 'COMPLETE') {
-            return h.response(err).code(400);
+        const finishedTask = await prisma.task.findFirst({
+            where: {
+                task_id: id,
+                state: 'COMPLETE'
+            }
+        })
+
+        if (finishedTask) {
+            return h.response("Not possible to update a finished task!").code(400);
+
         }
 
         const editTask = await prisma.task.update({
@@ -138,11 +150,12 @@ async function editTaskHandler(request, h) {
             },
             data: {
                 state: 'COMPLETE',
-                description: payload.description,
-            },
+                description: payload.description
+            }
         })
         return h.response(editTask);
     } catch (err) {
+        console.log(err);
         return h.response(err).code(400);
     }
 }
