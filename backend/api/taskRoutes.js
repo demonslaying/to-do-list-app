@@ -129,26 +129,19 @@ async function editTaskHandler(request, h) {
         return h.response("Invalid task").code(404);
     }
 
+    if (findUnique.state == "COMPLETE") {
+        return h.response("Not possible to update a finished task!").code(400);
+    }
+
     const payload = request.payload;
 
     try {
-        const finishedTask = await prisma.task.findFirst({
-            where: {
-                task_id: id,
-                state: 'COMPLETE'
-            }
-        })
-
-        if (finishedTask) {
-            return h.response("Not possible to update a finished task!").code(400);
-        }
-
         const editTask = await prisma.task.update({
             where: {
                 task_id: id
             },
             data: {
-                state: 'COMPLETE',
+                state: payload.state,
                 description: payload.description
             }
         })
