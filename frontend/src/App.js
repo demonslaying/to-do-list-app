@@ -1,7 +1,7 @@
 function App() {
   return (
     <div className="todo-app">
-      <h1> TODO APP </h1>
+      <h1>TODO APP</h1>
     </div>
   );
 }
