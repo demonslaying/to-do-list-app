@@ -41,8 +41,9 @@ const apiTasks = [
         options: {
             validate: {
                 payload: Joi.object({
-                    description: Joi.string().required()
-                })
+                    state: Joi.string().valid('COMPLETE').insensitive(),
+                    description: Joi.string(),
+                }).or('state', 'description')
             }
         }
     },
@@ -161,7 +162,7 @@ async function deleteTaskHandler(request, h) {
         })
         return h.response();
     } catch (err) {
-        console.log("", err);
+        console.log(err);
         return h.response(err).code(404);
     }
 }
