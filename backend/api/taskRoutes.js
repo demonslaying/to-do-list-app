@@ -28,8 +28,8 @@ const apiTasks = [
         options: {
             validate: {
                 query: Joi.object({
-                    filter: Joi.string().valid('ALL', 'COMPLETE', 'INCOMPLETE').default('ALL').insensitive(),
-                    orderBy: Joi.string().valid('DESCRIPTION', 'DATE_ADDED').default('DATE_ADDED').insensitive(),
+                    filter: Joi.string().valid(apiFilters.ALL, apiFilters.COMPLETE, apiFilters.INCOMPLETE).default(apiFilters.ALL).insensitive(),
+                    orderBy: Joi.string().valid(apiFilters.DESCRIPTION, apiFilters.DATE_ADDED).default(apiFilters.DATE_ADDED).insensitive(),
                 })
             }
         }
@@ -42,7 +42,7 @@ const apiTasks = [
         options: {
             validate: {
                 payload: Joi.object({
-                    state: Joi.string().valid('COMPLETE').insensitive(),
+                    state: Joi.string().valid(apiFilters.COMPLETE).insensitive(),
                     description: Joi.string(),
                 }).or('state', 'description')
             }
@@ -116,7 +116,7 @@ async function editTaskHandler(request, h) {
         return h.response("Invalid task").code(404);
     }
 
-    if (findUnique.state == "COMPLETE") {
+    if (findUnique.state == apiFilters.COMPLETE) {
         return h.response("Not possible to update a finished task!").code(400);
     }
 
