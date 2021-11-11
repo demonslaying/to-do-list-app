@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient()
+const { apiFilters } = require('./models/filters.model.js');
 
 const apiTasks = [
     // Home Route
@@ -68,54 +69,39 @@ async function createTaskHandler(request, h) {
 }
 
 async function getTasksHandler(request, h) {
+    let tasks;
+    try {
+        if (request.query.filter == apiFilters.ALL) {
+            if (request.query.orderBy == apiFilters.DESCRIPTION) {
+                tasks = await getTasksOrderedBy(apiFilters.DESCRIPTION);
+            }
+            else {
+                tasks = await getTasksOrderedBy(apiFilters.DATE_ADDED);
+            }
+        }
+        else if (request.query.orderBy == apiFilters.DESCRIPTION) {
+            tasks = await getTasksOrderedBy(apiFilters.DESCRIPTION, request.query.filter);
+        }
+        else {
+            tasks = await getTasksOrderedBy(apiFilters.DATE_ADDED, request.query.filter);
+        }
+        return h.response(tasks);
+    } catch (err) {
+        console.log(err)
+    }
+}
 
-    if (request.query.filter == 'ALL') {
-        try {
-            if (request.query.orderBy == 'DESCRIPTION') {
-                const tasks = await prisma.task.findMany({
-                    orderBy: {
-                        description: 'asc'
-                    }
-                })
-                return h.response(tasks);
-            }
-            else {
-                const tasks = await prisma.task.findMany({
-                    orderBy: {
-                        dateAdded: 'asc'
-                    }
-                })
-                return h.response(tasks);
-            }
-        } catch (err) {
-            console.log(err)
+async function getTasksOrderedBy(prop, filter) {
+    const tasks = await prisma.task.findMany({
+        where: filter == null ? undefined : {
+            state: filter
+        },
+        orderBy: {
+            // Dynamic Property
+            [`${prop}`]: 'asc'
         }
-    }
-    else {
-        try {
-            if (request.query.orderBy == 'DESCRIPTION') {
-                const tasks = await prisma.task.findMany({
-                    where: {
-                        state: request.query.filter
-                    },
-                    orderBy: {
-                        description: 'asc'
-                    }
-                })
-                return h.response(tasks);
-            }
-            else {
-                const tasks = await prisma.task.findMany({
-                    where: {
-                        state: request.query.filter
-                    }
-                })
-                return h.response(tasks);
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    })
+    return tasks
 }
 
 async function editTaskHandler(request, h) {
