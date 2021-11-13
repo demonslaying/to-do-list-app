@@ -5,18 +5,18 @@ function TodoForm(props) {
 
     const handleChange = e => {
         setInput(e.target.value);
-    }
+    };
 
     const handleSubmit = e => {
         e.preventDefault();
 
-        /*props.onSubmit({
+        props.onSubmit({
             // TODO: CALL THE API CREATE TASK
-            descrption: input
-        })*/
+            description: input
+        });
 
         setInput('');
-    }
+    };
 
     return (
         <form className="todo-form" onSubmit={handleSubmit}>
@@ -29,7 +29,9 @@ function TodoForm(props) {
                 onChange={handleChange}
             />
             <button className="todo-button">Create</button>
-        </form>
+            <h1 class="left"> Tasks </h1>
+            <hr class="solid" />
+        </form >
     )
 }
 
