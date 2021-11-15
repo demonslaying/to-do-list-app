@@ -12,6 +12,7 @@ function TodoForm(props) {
 
         props.onSubmit({
             // TODO: CALL THE API CREATE TASK
+            id: Math.floor(Math.random() * 10000),
             description: input
         });
 
