@@ -1,0 +1,156 @@
+const Joi = require('joi');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient()
+const { apiFilters } = require('./models/filters.model.js');
+
+const apiTasks = [
+    // Home Route
+    {
+        method: 'GET',
+        path: '/',
+        handler: (request, h) => {
+            return 'Hello World!';
+        }
+    },
+
+    // Dynamic Routes
+    // Route to CREATE
+    {
+        method: 'PUT',
+        path: '/todos',
+        handler: createTaskHandler
+    },
+    // Route to GET 
+    {
+        method: 'GET',
+        path: '/todos',
+        handler: getTasksHandler,
+        options: {
+            validate: {
+                query: Joi.object({
+                    filter: Joi.string().valid(apiFilters.ALL, apiFilters.COMPLETE, apiFilters.INCOMPLETE).default(apiFilters.ALL).insensitive(),
+                    orderBy: Joi.string().valid(apiFilters.DESCRIPTION, apiFilters.DATE_ADDED).default(apiFilters.DATE_ADDED).insensitive(),
+                })
+            }
+        }
+    },
+    // Route to PATCH
+    {
+        method: 'PATCH',
+        path: '/todo/{id}',
+        handler: editTaskHandler,
+        options: {
+            validate: {
+                payload: Joi.object({
+                    state: Joi.string().valid(apiFilters.COMPLETE).insensitive(),
+                    description: Joi.string(),
+                }).or('state', 'description')
+            }
+        }
+    },
+    // Route to DELETE 
+    {
+        method: 'DELETE',
+        path: '/todo/{id}',
+        handler: deleteTaskHandler
+    },
+]
+
+async function createTaskHandler(request, h) {
+    const payload = request.payload;
+
+    const createTask = await prisma.task.create({
+        data: {
+            description: payload.description,
+        },
+    })
+
+    return h.response(createTask);
+}
+
+async function getTasksHandler(request, h) {
+    let tasks;
+    try {
+        if (request.query.filter == apiFilters.ALL) {
+            if (request.query.orderBy == apiFilters.DESCRIPTION) {
+                tasks = await getTasksOrderedBy(apiFilters.DESCRIPTION);
+            }
+            else {
+                tasks = await getTasksOrderedBy(apiFilters.DATE_ADDED);
+            }
+        }
+        else if (request.query.orderBy == apiFilters.DESCRIPTION) {
+            tasks = await getTasksOrderedBy(apiFilters.DESCRIPTION, request.query.filter);
+        }
+        else {
+            tasks = await getTasksOrderedBy(apiFilters.DATE_ADDED, request.query.filter);
+        }
+        return h.response(tasks);
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+async function getTasksOrderedBy(prop, filter) {
+    const tasks = await prisma.task.findMany({
+        where: filter == null ? undefined : {
+            state: filter
+        },
+        orderBy: {
+            // Dynamic Property
+            [`${prop}`]: 'asc'
+        }
+    })
+    return tasks
+}
+
+async function editTaskHandler(request, h) {
+    const id = Number(request.params.id);
+    const findUnique = await prisma.task.findUnique({
+        where: {
+            task_id: id
+        }
+    })
+
+    if (!findUnique) {
+        return h.response("Invalid task").code(404);
+    }
+
+    if (findUnique.state == apiFilters.COMPLETE) {
+        return h.response("Not possible to update a finished task!").code(400);
+    }
+
+    const payload = request.payload;
+
+    try {
+        const editTask = await prisma.task.update({
+            where: {
+                task_id: id
+            },
+            data: {
+                state: payload.state,
+                description: payload.description
+            }
+        })
+        return h.response(editTask);
+    } catch (err) {
+        console.log(err);
+        return h.response(err).code(400);
+    }
+}
+
+async function deleteTaskHandler(request, h) {
+    const id = Number(request.params.id);
+
+    try {
+        const task = await prisma.task.delete({
+            where: { task_id: id },
+        })
+        return h.response();
+    } catch (err) {
+        console.log(err);
+        return h.response(err).code(404);
+    }
+}
+
+module.exports.routes = apiTasks;
