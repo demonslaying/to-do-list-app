@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import api from "../services/api"
 
 function TodoForm(props) {
     const [input, setInput] = useState('')
@@ -7,13 +8,20 @@ function TodoForm(props) {
         setInput(e.target.value);
     };
 
+    const postData = () => {
+        api.post("todos", input).then((response) => {
+            console.log(response);
+        });
+    }
+
     const handleSubmit = e => {
         e.preventDefault();
 
         props.onSubmit({
+            postData
             // TODO: CALL THE API CREATE TASK
-            id: Math.floor(Math.random() * 10000),
-            description: input
+            //id: Math.floor(Math.random() * 10000),
+            //description: input
         });
 
         setInput('');
