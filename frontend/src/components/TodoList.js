@@ -7,11 +7,10 @@ function TodoList() {
     let [todos, setTodos] = useState([])
 
     //TODO: FAZER FUNCAO GETtodos, depois de fazer o get atualizar os todos com o setTodos
-
     const getTodos = () => {
         api.get("todos").then((response) => {
             todos = response.data;
-            console.log(todos);
+            //console.log(todos);
             setTodos(todos);
         });
     }
@@ -23,7 +22,7 @@ function TodoList() {
     return (
         <div>
             <TodoForm onSubmit={getTodos} />
-            <Todo todos={todos} />
+            <Todo todos={todos} onClick={getTodos} />
         </div>
     )
 }

@@ -2,12 +2,21 @@ import React, { useState } from 'react'
 import TodoForm from './TodoForm'
 import { TiEdit } from 'react-icons/ti'
 import { RiCloseCircleLine } from 'react-icons/ri'
+import api from "../services/api"
 
-function Todo({ todos }) {
-    const [edit, setEdit] = useState({
-        id: null,
+function Todo({ onClick, todos }) {
+    const [todo, setTodo] = useState({
+        task_id: null,
+        state: 'INCOMPLETE',
         description: ''
     });
+
+    const deleteTodo = task_id => {
+        console.log(task_id);
+        api.delete(`todo/${task_id}`).then((response) => {
+            onClick();
+        });
+    }
 
     const completeTodo = id => {
         let updatedTodos = todos.map(todo => {
@@ -29,7 +38,7 @@ function Todo({ todos }) {
             </div>
             <div className="icons">
                 <TiEdit />
-                <RiCloseCircleLine />
+                <RiCloseCircleLine className='delete-icon' key={todo.task_id} onClick={() => deleteTodo(todo.task_id)} />
             </div>
         </div >
     ))

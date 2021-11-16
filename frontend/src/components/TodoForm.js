@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import api from "../services/api"
 
-function TodoForm(props) {
+function TodoForm({ onSubmit }) {
     const [input, setInput] = useState('')
 
     const putData = () => {
@@ -9,8 +9,8 @@ function TodoForm(props) {
             description: input
         }).then((response) => {
             // TODO: CHAMAR GET
-            props.onSubmit();
-            console.log(response.data);
+            // TODO: RETIRAR O ELEM APAGADO E APRESENTAR A LISTA
+            onSubmit();
         });
     }
 
