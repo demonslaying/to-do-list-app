@@ -1,35 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TodoForm from './TodoForm'
 import Todo from './Todo'
+import api from "../services/api"
 
 function TodoList() {
-    const [todos, setTodos] = useState([])
+    let [todos, setTodos] = useState([])
 
-    const addTodo = todo => {
-        if (!todo.description || /^\s*$/.test(todo.description)) {
-            return;
-        }
+    //TODO: FAZER FUNCAO GETtodos, depois de fazer o get atualizar os todos com o setTodos
 
-        const newTodos = [todo, ...todos];
-
-        setTodos(newTodos);
-        console.log(todo, ...todos);
-    };
-
-    const completeTodo = id => {
-        let updatedTodos = todos.map(todo => {
-            if (todo.id === id) {
-                todo.isComplete = !todo.isComplete;
-            }
-            return todo;
-        })
-        setTodos(updatedTodos);
+    const getTodos = () => {
+        api.get("todos").then((response) => {
+            todos = response.data;
+            console.log(todos);
+            setTodos(todos);
+        });
     }
+
+    useEffect(() => {
+        getTodos();
+    }, []);
 
     return (
         <div>
-            <TodoForm onSubmit={addTodo} />
-            <Todo todos={todos} completeTodo={completeTodo} />
+            <TodoForm onSubmit={getTodos} />
+            <Todo todos={todos} />
         </div>
     )
 }

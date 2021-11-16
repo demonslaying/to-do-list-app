@@ -1,29 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import api from "../services/api"
 
 function TodoForm(props) {
     const [input, setInput] = useState('')
 
+    const putData = () => {
+        api.put("todos", {
+            description: input
+        }).then((response) => {
+            // TODO: CHAMAR GET
+            props.onSubmit();
+            console.log(response.data);
+        });
+    }
+
+    const addTodo = () => {
+        if (!input || /^\s*$/.test(input)) {
+            return;
+        }
+
+        putData();
+    };
+
     const handleChange = e => {
         setInput(e.target.value);
     };
 
-    const postData = () => {
-        api.post("todos", input).then((response) => {
-            console.log(response);
-        });
-    }
-
     const handleSubmit = e => {
         e.preventDefault();
-
-        props.onSubmit({
-            postData
-            // TODO: CALL THE API CREATE TASK
-            //id: Math.floor(Math.random() * 10000),
-            //description: input
-        });
-
+        addTodo();
         setInput('');
     };
 
@@ -37,7 +42,7 @@ function TodoForm(props) {
                 className="todo-input"
                 onChange={handleChange}
             />
-            <button className="todo-button">Create</button>
+            <button type="submit" className="todo-button">Create</button>
             <h1 class="left"> Tasks </h1>
             <hr class="solid" />
         </form >
