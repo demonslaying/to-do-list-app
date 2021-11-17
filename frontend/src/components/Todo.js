@@ -4,12 +4,23 @@ import { TiEdit } from 'react-icons/ti'
 import { RiCloseCircleLine } from 'react-icons/ri'
 import api from "../services/api"
 
-function Todo({ onClick, todos }) {
-    const [todo, setTodo] = useState({
+function Todo({ onClick, todos, completeTodo, updateTodo }) {
+    const [edit, setEdit] = useState({
         task_id: null,
         state: 'INCOMPLETE',
         description: ''
     });
+
+    const submitUpdate = description => {
+        updateTodo(edit.task_id, description);
+        setEdit({
+            description: ''
+        });
+    }
+
+    if (edit.task_id) {
+        return <TodoForm edit={edit} onSubmit={submitUpdate} />;
+    }
 
     const deleteTodo = task_id => {
         console.log(task_id);
@@ -18,30 +29,17 @@ function Todo({ onClick, todos }) {
         });
     }
 
-    const completeTodo = id => {
-        let updatedTodos = todos.map(todo => {
-            if (todo.id === id) {
-                todo.isComplete = !todo.isComplete;
-            }
-            return todo;
-        })
-        //setTodos(updatedTodos);
-    }
-
     return todos.map((todo, index) => (
         <div className={todo.isComplete ? 'todo-row complete' : 'todo-row'} key={index}>
-            <div>
-                <input type="checkbox" />
-            </div>
-            <div className='description' key={todo.id} onClick={() => completeTodo(todo.id)}>
+            <div className='description' key={todo.task_id} onClick={() => completeTodo(todo.task_id)}>
                 {todo.description}
             </div>
             <div className="icons">
-                <TiEdit />
-                <RiCloseCircleLine className='delete-icon' key={todo.task_id} onClick={() => deleteTodo(todo.task_id)} />
+                <TiEdit className='edit-icon' onClick={() => setEdit({ description: todo.description })} />
+                <RiCloseCircleLine className='delete-icon' onClick={() => deleteTodo(todo.task_id)} />
             </div>
         </div >
-    ))
+    ));
 }
 
 export default Todo

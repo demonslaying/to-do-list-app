@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import api from "../services/api"
 
-function TodoForm({ onSubmit }) {
-    const [input, setInput] = useState('')
+function TodoForm({ onSubmit }, props) {
+    const [input, setInput] = useState(props.edit ? props.edit.value : '');
 
     const putData = () => {
         api.put("todos", {
@@ -18,9 +18,14 @@ function TodoForm({ onSubmit }) {
         if (!input || /^\s*$/.test(input)) {
             return;
         }
-
         putData();
     };
+
+    const inputRef = useRef(null)
+
+    useEffect(() => {
+        inputRef.current.focus()
+    })
 
     const handleChange = e => {
         setInput(e.target.value);
@@ -34,19 +39,39 @@ function TodoForm({ onSubmit }) {
 
     return (
         <form className="todo-form" onSubmit={handleSubmit}>
-            <input
-                type="text"
-                placeholder="Write new task here..."
-                value={input}
-                name="text"
-                className="todo-input"
-                onChange={handleChange}
-            />
-            <button type="submit" className="todo-button">Create</button>
+            {props.edit ?
+                (
+                    <>
+                        <input
+                            type="text"
+                            placeholder="Write new task here..."
+                            value={input}
+                            name="text"
+                            className="todo-input"
+                            onChange={handleChange}
+                            ref={inputRef}
+                        />
+                        <button type="submit" className="todo-button">Update</button>
+                    </>
+                ) :
+                (
+                    <>
+                        <input
+                            type="text"
+                            placeholder="Write new task here..."
+                            value={input}
+                            name="text"
+                            className="todo-input"
+                            onChange={handleChange}
+                            ref={inputRef}
+                        />
+                        <button type="submit" className="todo-button">Create</button>
+                    </>
+                )}
             <h1 class="left"> Tasks </h1>
             <hr class="solid" />
         </form >
-    )
+    );
 }
 
 export default TodoForm

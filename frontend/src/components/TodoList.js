@@ -6,7 +6,6 @@ import api from "../services/api"
 function TodoList() {
     let [todos, setTodos] = useState([])
 
-    //TODO: FAZER FUNCAO GETtodos, depois de fazer o get atualizar os todos com o setTodos
     const getTodos = () => {
         api.get("todos").then((response) => {
             todos = response.data;
@@ -19,12 +18,29 @@ function TodoList() {
         getTodos();
     }, []);
 
+    const completeTodo = task_id => {
+        let updatedTodos = todos.map(todo => {
+            if (todo.task_id === task_id) {
+                todo.isComplete = !todo.isComplete;
+            }
+            return todo;
+        })
+        setTodos(updatedTodos);
+    }
+
+    const updateTodo = (todoId, newValue) => {
+        if (!newValue.text || /^\s*$/.test(newValue.text)) {
+            return;
+        }
+        setTodos(prev => prev.map(item => (item.id === todoId ? newValue : item)));
+    }
+
     return (
         <div>
             <TodoForm onSubmit={getTodos} />
-            <Todo todos={todos} onClick={getTodos} />
+            <Todo todos={todos} onClick={getTodos} completeTodo={completeTodo} updateTodo={updateTodo} />
         </div>
-    )
+    );
 }
 
 export default TodoList
