@@ -1,25 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react'
 import api from "../services/api"
 
-function TodoForm(props, { onSubmit }) {
-    const [input, setInput] = useState(props.edit ? props.edit.value : '');
-
-    const putData = () => {
-        api.put("todos", {
-            description: input
-        }).then((response) => {
-            // TODO: CHAMAR GET
-            // TODO: RETIRAR O ELEM APAGADO E APRESENTAR A LISTA
-            onSubmit();
-        });
-    }
+function TodoForm({ onSubmit, edit }) {
+    const [input, setInput] = useState(edit ? edit.description : '');
 
     const addTodo = () => {
         if (!input || /^\s*$/.test(input)) {
             return;
         }
-        putData();
-    };
+
+        api.put("todos", {
+            description: input
+        }).then((response) => {
+            // TODO: RETIRAR O ELEM APAGADO E APRESENTAR A LISTA EM VEZ DE FAZER GET À API -> MELHOR PERFORMANCE
+            onSubmit();
+        });
+    }
 
     const inputRef = useRef(null)
 
@@ -39,11 +35,10 @@ function TodoForm(props, { onSubmit }) {
 
     return (
         <form className="todo-form" onSubmit={handleSubmit}>
-            {props.edit ? (
+            {edit ? (
                 <>
                     <input
                         type="text"
-                        placeholder="Update your task here..."
                         value={input}
                         name="text"
                         className="todo-input edit"
@@ -68,7 +63,6 @@ function TodoForm(props, { onSubmit }) {
                     <hr className="solid" />
                 </>
             )}
-
         </form >
     );
 }

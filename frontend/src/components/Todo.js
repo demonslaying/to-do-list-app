@@ -4,12 +4,25 @@ import { TiEdit } from 'react-icons/ti'
 import { RiCloseCircleLine } from 'react-icons/ri'
 import api from "../services/api"
 
-function Todo({ onClick, todos, completeTodo, updateTodo }) {
+function Todo({ onClick, todos, completeTodo }) {
     const [edit, setEdit] = useState({
         task_id: null,
         state: 'INCOMPLETE',
         description: ''
     });
+
+    const updateTodo = (task_id, newDescription) => {
+        if (!newDescription.text || /^\s*$/.test(newDescription.text)) {
+            return;
+        }
+
+        api.patch(`todo/${task_id}`, {
+            description: newDescription
+        }).then((response) => {
+            //onSubmit();
+        });
+        //setTodos(prev => prev.map(item => (item.id === task_id ? newDescription : item)));
+    }
 
     const submitUpdate = description => {
         updateTodo(edit.task_id, description);

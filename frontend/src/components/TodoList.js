@@ -9,7 +9,6 @@ function TodoList() {
     const getTodos = () => {
         api.get("todos").then((response) => {
             todos = response.data;
-            //console.log(todos);
             setTodos(todos);
         });
     }
@@ -28,18 +27,10 @@ function TodoList() {
         setTodos(updatedTodos);
     }
 
-    const updateTodo = (task_id, newDescription) => {
-        if (!newDescription.text || /^\s*$/.test(newDescription.text)) {
-            return;
-        }
-
-        setTodos(prev => prev.map(item => (item.id === task_id ? newDescription : item)));
-    }
-
     return (
         <div>
             <TodoForm onSubmit={getTodos} />
-            <Todo todos={todos} onClick={getTodos} completeTodo={completeTodo} updateTodo={updateTodo} />
+            <Todo todos={todos} onClick={getTodos} completeTodo={completeTodo} />
         </div>
     );
 }
