@@ -4,48 +4,52 @@ import { TiEdit } from 'react-icons/ti'
 import { RiCloseCircleLine } from 'react-icons/ri'
 import api from "../services/api"
 
-function Todo({ onClick, todos, completeTodo }) {
+function Todo({ getTodos, todos }) {
     const [edit, setEdit] = useState({
         task_id: null,
-        state: 'INCOMPLETE',
-        description: ''
+        state: null,
+        description: null,
     });
 
-    const updateTodo = (task_id, newDescription) => {
-        if (!newDescription.text || /^\s*$/.test(newDescription.text)) {
+    const updateTodoDescription = (task_id, newDescription) => {
+        if (!newDescription || /^\s*$/.test(newDescription)) {
             return;
         }
 
         api.patch(`todo/${task_id}`, {
             description: newDescription
-        }).then((response) => {
-            //onSubmit();
-        });
-        //setTodos(prev => prev.map(item => (item.id === task_id ? newDescription : item)));
-    }
-
-    const submitUpdate = description => {
-        updateTodo(edit.task_id, description);
-        setEdit({
-            task_id: edit.task_id,
-            state: 'INCOMPLETE',
-            description: ''
+        }).then((_) => {
+            setEdit({
+                task_id: null
+            });
+            getTodos();
         });
     }
 
     if (edit.task_id) {
-        return <TodoForm edit={edit} onSubmit={submitUpdate} />;
+        return <TodoForm edit={edit} onSubmit={updateTodoDescription} />;
+    }
+
+    const updateTodoState = (task_id, state) => {
+        api.patch(`todo/${task_id}`, {
+            state: state == 'COMPLETE' ? 'INCOMPLETE' : 'COMPLETE'
+        }).then((_) => {
+            setEdit({
+                state: state == 'COMPLETE' ? 'INCOMPLETE' : 'COMPLETE'
+            });
+            getTodos();
+        });
     }
 
     const deleteTodo = task_id => {
-        api.delete(`todo/${task_id}`).then((response) => {
-            onClick();
+        api.delete(`todo/${task_id}`).then((_) => {
+            getTodos();
         });
     }
 
     return todos.map((todo, index) => (
-        <div className={todo.isComplete ? 'todo-row complete' : 'todo-row'} key={index}>
-            <div className='description' key={todo.task_id} onClick={() => completeTodo(todo.task_id)}>
+        <div className={todo.state == 'COMPLETE' ? 'todo-row complete' : 'todo-row'} key={index}>
+            <div className='description' key={todo.task_id} onClick={() => updateTodoState(todo.task_id, todo.state)}>
                 {todo.description}
             </div>
             <div className="icons">

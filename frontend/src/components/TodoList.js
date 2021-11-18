@@ -17,20 +17,10 @@ function TodoList() {
         getTodos();
     }, []);
 
-    const completeTodo = task_id => {
-        let updatedTodos = todos.map(todo => {
-            if (todo.task_id === task_id) {
-                todo.isComplete = !todo.isComplete;
-            }
-            return todo;
-        })
-        setTodos(updatedTodos);
-    }
-
     return (
         <div>
             <TodoForm onSubmit={getTodos} />
-            <Todo todos={todos} onClick={getTodos} completeTodo={completeTodo} />
+            <Todo todos={todos} getTodos={getTodos} />
         </div>
     );
 }

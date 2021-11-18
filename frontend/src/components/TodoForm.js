@@ -29,7 +29,12 @@ function TodoForm({ onSubmit, edit }) {
 
     const handleSubmit = e => {
         e.preventDefault();
-        addTodo();
+        if (edit?.task_id) {
+            onSubmit(edit.task_id, input);
+        }
+        else {
+            addTodo();
+        }
         setInput('');
     };
 

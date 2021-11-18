@@ -42,7 +42,7 @@ const apiTasks = [
         options: {
             validate: {
                 payload: Joi.object({
-                    state: Joi.string().valid(apiFilters.COMPLETE).insensitive(),
+                    state: Joi.string().insensitive(),
                     description: Joi.string(),
                 }).or('state', 'description')
             }
@@ -116,9 +116,9 @@ async function editTaskHandler(request, h) {
         return h.response("Invalid task").code(404);
     }
 
-    if (findUnique.state == apiFilters.COMPLETE) {
-        return h.response("Not possible to update a finished task!").code(400);
-    }
+    //if (findUnique.state == apiFilters.COMPLETE) {
+    //    return h.response("Not possible to update a finished task!").code(400);
+    //}
 
     const payload = request.payload;
 
