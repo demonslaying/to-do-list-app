@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import api from "../services/api"
 
-function TodoForm({ onSubmit }, props) {
+function TodoForm(props, { onSubmit }) {
     const [input, setInput] = useState(props.edit ? props.edit.value : '');
 
     const putData = () => {
@@ -39,37 +39,36 @@ function TodoForm({ onSubmit }, props) {
 
     return (
         <form className="todo-form" onSubmit={handleSubmit}>
-            {props.edit ?
-                (
-                    <>
-                        <input
-                            type="text"
-                            placeholder="Write new task here..."
-                            value={input}
-                            name="text"
-                            className="todo-input"
-                            onChange={handleChange}
-                            ref={inputRef}
-                        />
-                        <button type="submit" className="todo-button">Update</button>
-                    </>
-                ) :
-                (
-                    <>
-                        <input
-                            type="text"
-                            placeholder="Write new task here..."
-                            value={input}
-                            name="text"
-                            className="todo-input"
-                            onChange={handleChange}
-                            ref={inputRef}
-                        />
-                        <button type="submit" className="todo-button">Create</button>
-                    </>
-                )}
-            <h1 class="left"> Tasks </h1>
-            <hr class="solid" />
+            {props.edit ? (
+                <>
+                    <input
+                        type="text"
+                        placeholder="Update your task here..."
+                        value={input}
+                        name="text"
+                        className="todo-input edit"
+                        onChange={handleChange}
+                        ref={inputRef}
+                    />
+                    <button type="submit" className="todo-button edit">Update</button>
+                </>
+            ) : (
+                <>
+                    <input
+                        type="text"
+                        placeholder="Write new task here..."
+                        value={input}
+                        name="text"
+                        className="todo-input"
+                        onChange={handleChange}
+                        ref={inputRef}
+                    />
+                    <button type="submit" className="todo-button">Create</button>
+                    <h1 className="left"> Tasks </h1>
+                    <hr className="solid" />
+                </>
+            )}
+
         </form >
     );
 }

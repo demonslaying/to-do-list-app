@@ -28,11 +28,12 @@ function TodoList() {
         setTodos(updatedTodos);
     }
 
-    const updateTodo = (todoId, newValue) => {
-        if (!newValue.text || /^\s*$/.test(newValue.text)) {
+    const updateTodo = (task_id, newDescription) => {
+        if (!newDescription.text || /^\s*$/.test(newDescription.text)) {
             return;
         }
-        setTodos(prev => prev.map(item => (item.id === todoId ? newValue : item)));
+
+        setTodos(prev => prev.map(item => (item.id === task_id ? newDescription : item)));
     }
 
     return (

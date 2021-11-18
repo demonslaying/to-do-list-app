@@ -14,6 +14,8 @@ function Todo({ onClick, todos, completeTodo, updateTodo }) {
     const submitUpdate = description => {
         updateTodo(edit.task_id, description);
         setEdit({
+            task_id: edit.task_id,
+            state: 'INCOMPLETE',
             description: ''
         });
     }
@@ -23,7 +25,6 @@ function Todo({ onClick, todos, completeTodo, updateTodo }) {
     }
 
     const deleteTodo = task_id => {
-        console.log(task_id);
         api.delete(`todo/${task_id}`).then((response) => {
             onClick();
         });
@@ -35,7 +36,11 @@ function Todo({ onClick, todos, completeTodo, updateTodo }) {
                 {todo.description}
             </div>
             <div className="icons">
-                <TiEdit className='edit-icon' onClick={() => setEdit({ description: todo.description })} />
+                <TiEdit className='edit-icon' onClick={() => setEdit({
+                    task_id: todo.task_id,
+                    state: todo.state,
+                    description: todo.description
+                })} />
                 <RiCloseCircleLine className='delete-icon' onClick={() => deleteTodo(todo.task_id)} />
             </div>
         </div >
