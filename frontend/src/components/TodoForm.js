@@ -12,7 +12,6 @@ function TodoForm({ onSubmit, edit }) {
         api.put("todos", {
             description: input
         }).then((response) => {
-            // TODO: RETIRAR O ELEM APAGADO E APRESENTAR A LISTA EM VEZ DE FAZER GET À API -> MELHOR PERFORMANCE
             onSubmit();
         });
     }
