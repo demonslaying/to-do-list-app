@@ -165,6 +165,7 @@ h1.hideComplete {
 /* Solid border */
 hr.solid {
   border-top: 2px solid #bbb;
+  margin-bottom: 20px;
 }
 
 .description {

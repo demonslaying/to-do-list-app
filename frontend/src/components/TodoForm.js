@@ -63,8 +63,6 @@ function TodoForm({ onSubmit, edit }) {
                         ref={inputRef}
                     />
                     <button type="submit" className="todo-button">Create</button>
-                    <h1 className="left"> Tasks </h1>
-                    <hr className="solid" />
                 </>
             )}
         </form >
