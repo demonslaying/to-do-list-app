@@ -5,13 +5,14 @@ function TodoForm({ onSubmit, edit }) {
     const [input, setInput] = useState(edit ? edit.description : '');
 
     const addTodo = () => {
+        //TODO: INVOCAR FUNÇÃO DE UTILIDADE
         if (!input || /^\s*$/.test(input)) {
             return;
         }
 
         api.put("todos", {
             description: input
-        }).then((response) => {
+        }).then((_) => {
             onSubmit();
         });
     }
