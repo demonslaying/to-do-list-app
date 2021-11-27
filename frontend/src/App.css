@@ -156,6 +156,7 @@ h1 {
 h1.left {
   text-align: start;
   margin-left: 20px;
+  cursor: pointer;
 }
 
 h1.hideComplete {
