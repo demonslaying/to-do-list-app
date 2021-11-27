@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
 import api from "../services/api"
+import Utils from "../utils/utils"
 
 function TodoForm({ onSubmit, edit }) {
     const [input, setInput] = useState(edit ? edit.description : '');
 
     const addTodo = () => {
-        //TODO: INVOCAR FUNÇÃO DE UTILIDADE
-        if (!input || /^\s*$/.test(input)) {
+        if (Utils.checkNullInput(input)) {
             return;
         }
 

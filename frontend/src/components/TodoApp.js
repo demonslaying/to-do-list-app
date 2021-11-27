@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import TodoForm from './TodoForm'
 import api from "../services/api"
 import TodoList from './TodoList';
+import Utils from "../utils/utils"
 
 function TodoApp() {
     let [todos, setTodos] = useState([])
@@ -14,7 +15,6 @@ function TodoApp() {
 
     const getTodos = () => {
         api.get("todos").then((response) => {
-            console.log(response.data)
             setTodos(response.data);
         });
     }
@@ -24,8 +24,7 @@ function TodoApp() {
     }, []);
 
     const updateTodoDescription = (task_id, newDescription) => {
-        //TODO: INVOCAR FUNÇÃO DE UTILIDADE
-        if (!newDescription || /^\s*$/.test(newDescription)) {
+        if (Utils.checkNullInput(newDescription)) {
             return;
         }
 

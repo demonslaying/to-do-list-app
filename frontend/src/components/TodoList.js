@@ -14,6 +14,7 @@ function TodoList({ todos, updateEditTodo, updateTodoState, deleteTodo }) {
         date: true
     })
 
+    // Função de ordenação consoante o critério
     const orderTodos = (todoA, todoB) => {
         if (sort.date) {
             return todoA.dateAdded - todoB.dateAdded;
@@ -28,6 +29,7 @@ function TodoList({ todos, updateEditTodo, updateTodoState, deleteTodo }) {
 
     return <div>
         <h1 className="left" onClick={() => {
+            // Lógica do próximo estado se tiver asc passa para desc e assim sucessivamente
             if (sort.asc) {
                 setSort({
                     asc: false,
